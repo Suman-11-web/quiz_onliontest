@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024">
+    <title>Epic Arena Leaderboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=11">
+    <style>
+        body { background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #000000); min-height: 100vh; padding: 20px 0; }
+        .dash-card { max-width: 550px; width: 95%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(25px); border: 1px solid rgba(0, 242, 254, 0.15); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 242, 254, 0.05); margin-bottom: 30px;}
+        
+        .stat-grid { display: flex; gap: 15px; margin: 25px 0; }
+        .stat-box { flex: 1; background: linear-gradient(145deg, rgba(0, 242, 254, 0.1), rgba(0, 0, 0, 0.4)); border: 1px solid rgba(0, 242, 254, 0.3); border-radius: 20px; padding: 20px 5px; text-align: center; }
+        .stat-num { font-size: 2.2rem; font-weight: 900; color: #fff; text-shadow: 0 0 15px #00f2fe; margin: 0; line-height: 1; }
+        .stat-label { font-size: 0.75rem; font-weight: 900; color: #38bdf8; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;}
+
+        .leaderboard-container { background: rgba(0,0,0,0.2); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .leaderboard { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .leaderboard th { color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; padding: 0 10px 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .leaderboard tr.data-row { background: rgba(255, 255, 255, 0.03); }
+        .leaderboard tr.data-row td { padding: 16px 15px; color: #e2e8f0; font-weight: 800; font-size: 1rem; }
+        .leaderboard tr.data-row td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        .leaderboard tr.data-row td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; text-align: right; font-size: 1.1rem; }
+        
+        .rank-1 { background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), rgba(0,0,0,0)) !important; border-left: 5px solid #fbbf24; }
+        .rank-1 td { color: #fbbf24 !important; text-shadow: 0 0 15px rgba(251, 191, 36, 0.6); }
+        .rank-2 { border-left: 5px solid #94a3b8; }
+        .rank-3 { border-left: 5px solid #b45309; }
+        
+        /* GOD MODE STYLES */
+        .forge-box { background: rgba(0, 0, 0, 0.4); border: 1px solid #f43f5e; border-radius: 20px; padding: 20px; margin-top: 20px; }
+        .forge-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #f43f5e; color: white; padding: 12px; border-radius: 10px; margin-bottom: 10px; font-weight: bold;}
+        .forge-input:focus { outline: none; box-shadow: 0 0 10px rgba(244, 63, 94, 0.5); }
+        .q-list-item { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #00f2fe;}
+    </style>
+</head>
+<body>
+    <div class="main-card dash-card">
+        
+        <div class="top-nav" style="margin-bottom: 10px;">
+            <div class="epic-user" style="color: #00f2fe; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.5rem;">🎮</span> 
+                {% if user == 'ADMIN HQ' %} OVERSEER COMMAND {% else %} STUDENT: {{ user }} {% endif %}
+            </div>
+            <a href="/" style="text-decoration: none;">
+                <div class="fab-item" style="opacity: 1; transform: scale(1); width: 45px; height: 45px; background: rgba(0, 242, 254, 0.1); border: 1px solid #00f2fe; box-shadow: 0 0 10px rgba(0,242,254,0.3);" title="Return to Arena">⚔️</div>
+            </a>
+        </div>
+
+        <h2 class="epic-title" style="font-size: 1.6rem; text-align: center; letter-spacing: 4px;">COMBAT RECORD</h2>
+        
+        <div class="stat-grid">
+            <div class="stat-box"><p class="stat-num">{{ total_quizzes }}</p><p class="stat-label">Battles</p></div>
+            <div class="stat-box"><p class="stat-num">{{ highest_score }}</p><p class="stat-label">Best Score</p></div>
+            <div class="stat-box"><p class="stat-num">{{ average_score }}</p><p class="stat-label">Avg Score</p></div>
+        </div>
+
+        <h2 class="epic-title" style="font-size: 1.4rem; margin: 30px 0 15px 0; background: linear-gradient(90deg, #a855f7, #818cf8, #00f2fe); -webkit-background-clip: text; text-align: center; letter-spacing: 3px;">GLOBAL TOP 10</h2>
+
+        <div class="leaderboard-container">
+            <table class="leaderboard">
+                <thead><tr><th style="text-align: left;">Rank</th><th style="text-align: left;">Student</th><th style="text-align: right;">Score</th></tr></thead>
+                <tbody>
+                    {% for row in leaderboard %}
+                    <tr class="data-row {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% endif %}">
+                        <td style="text-align: left;">{% if loop.index == 1 %}👑 #1{% else %}#{{ loop.index }}{% endif %}</td>
+                        <td style="text-align: left;">{{ row[0] }}</td>
+                        <td style="text-align: right;">{{ row[1] }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="3" style="text-align: center; color: #64748b; padding: 30px 0;">No scores yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if user == 'ADMIN HQ' %}
+        <h2 class="epic-title" style="font-size: 1.4rem; margin: 40px 0 15px 0; background: linear-gradient(90deg, #f43f5e, #fb923c); -webkit-background-clip: text; text-align: center; letter-spacing: 3px;">🛠️ ARENA FORGE</h2>
+        
+        <div class="forge-box">
+            <h3 style="color: #f43f5e; margin-bottom: 15px; text-transform: uppercase; font-size: 0.9rem;">Create New Question</h3>
+            <input type="text" id="new-q" class="forge-input" placeholder="Enter Question Here...">
+            <input type="text" id="opt-0" class="forge-input" placeholder="Option A">
+            <input type="text" id="opt-1" class="forge-input" placeholder="Option B">
+            <input type="text" id="opt-2" class="forge-input" placeholder="Option C">
+            <input type="text" id="opt-3" class="forge-input" placeholder="Option D">
+            
+            <select id="correct-ans" class="forge-input" style="appearance: none;">
+                <option value="0">Correct Answer: Option A</option>
+                <option value="1">Correct Answer: Option B</option>
+                <option value="2">Correct Answer: Option C</option>
+                <option value="3">Correct Answer: Option D</option>
+            </select>
+
+            <button onclick="addQuestion()" class="btn-login" style="background: linear-gradient(90deg, #f43f5e, #fb923c); box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);">➕ ADD TO ARENA</button>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <h3 style="color: #94a3b8; margin-bottom: 15px; font-size: 0.9rem;">CURRENT ACTIVE QUESTIONS ({{ questions|length }})</h3>
+            <div id="questions-list">
+                {% for q in questions %}
+                <div class="q-list-item">
+                    <div style="color: #cbd5e1; font-size: 0.9rem; font-weight: bold; width: 85%;">
+                        {{ loop.index }}. {{ q.question }}
+                    </div>
+                    <button onclick="deleteQuestion({{ loop.index0 }})" style="background: #ef4444; border: none; color: white; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);">🗑️</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+            async function addQuestion() {
+                const q = document.getElementById('new-q').value;
+                const o0 = document.getElementById('opt-0').value;
+                const o1 = document.getElementById('opt-1').value;
+                const o2 = document.getElementById('opt-2').value;
+                const o3 = document.getElementById('opt-3').value;
+                const ans = document.getElementById('correct-ans').value;
+
+                if(!q || !o0 || !o1 || !o2 || !o3) {
+                    alert("Please fill out all fields!");
+                    return;
+                }
+
+                const data = {
+                    question: q,
+                    options: [o0, o1, o2, o3],
+                    answer: ans
+                };
+
+                await fetch('/admin/add_question', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                window.location.reload();
+            }
+
+            async function deleteQuestion(index) {
+                if(confirm("Are you sure you want to delete this question?")) {
+                    await fetch('/admin/delete_question', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ index: index })
+                    });
+                    window.location.reload();
+                }
+            }
+        </script>
+        {% endif %}
+
+    </div>
+</body>
+</html>

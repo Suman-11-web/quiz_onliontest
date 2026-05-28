@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="navbar">
+    <div class="logo">Epic Academy</div>
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+</div>
+<div class="dropdown" id="dropdownMenu">
+    <a href="/">Quiz</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="main-container" style="text-align:left;">
+    <h2>Welcome, {{ user }} 👋</h2>
+
+    <div class="card">
+        <h3>Total Quizzes Attempted</h3>
+        <p>{{ total_quizzes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Highest Score</h3>
+        <p>{{ highest_score }}%</p>
+    </div>
+
+    <div class="card">
+        <h3>Average Score</h3>
+        <p>{{ average_score }}%</p>
+    </div>
+</div>
+
+<script>
+function toggleMenu() {
+    const menu = document.getElementById("dropdownMenu");
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+</script>
+</body>
+</html>

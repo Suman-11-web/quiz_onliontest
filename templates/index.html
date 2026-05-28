@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024">
+    <title>Epic Quiz Arena</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=10">
+    <style>
+        /* EPIC INSTANT FEEDBACK ANIMATIONS */
+        .option-row.correct {
+            background: #dcfce7 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+            box-shadow: 0 4px 0 #059669 !important;
+            transform: scale(1.02);
+        }
+        .option-row.correct .label-box { background: #10b981 !important; color: white !important; }
+
+        .option-row.wrong {
+            background: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+            box-shadow: 0 4px 0 #b91c1c !important;
+            animation: shakeError 0.4s ease-in-out forwards;
+        }
+        .option-row.wrong .label-box { background: #ef4444 !important; color: white !important; }
+
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-overlay" style="animation: fadeOutOverlay 0.8s forwards 0.8s;">
+        <div class="magic-orb"></div>
+        <div style="color: #ca8a04; font-weight: 900; letter-spacing: 2px; font-size: 1.2rem;">LOADING...</div>
+    </div>
+
+    <div class="main-card">
+        
+        <div class="top-nav">
+            <div class="epic-user">👋 {{ user }}</div>
+            
+            <div class="menu-container">
+                <div class="menu-icon" onclick="toggleMenu()">🍔</div>
+                <div id="sideMenu" class="fab-menu">
+                    <a href="#" class="fab-item" onclick="location.reload()" title="Restart">↻</a>
+                    <a href="/logout" class="fab-item" title="Logout">✖</a>
+                    <a href="/dashboard" class="fab-item" title="Leaderboard">🏆</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="q-box">
+            <span class="q-counter">Question <span id="q-num">1</span> of 20</span>
+            <p id="q-text" class="q-text">Loading...</p>
+        </div>
+
+        <div id="options-box"></div>
+
+        <div class="action-row">
+            <button class="btn-skip" id="btn-skip" onclick="handleSkip()">Skip ⏭️</button>
+            <button class="btn-next" id="btn-next" style="flex: 2;" onclick="handleNext()">Next ✨</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() { document.getElementById("sideMenu").classList.toggle("active"); }
+
+        let questions = [];
+        let cur = 0;
+        let score = 0;
+        let selectedIdx = -1;
+        let isAnimating = false; // Prevents clicking "Next" twice while colors are flashing
+
+        async function init() {
+            try {
+                const res = await fetch('/api/questions');
+                questions = await res.json();
+                render();
+            } catch (err) {
+                document.getElementById('q-text').innerText = "Error loading questions from server.";
+            }
+        }
+
+        function render() {
+            selectedIdx = -1;
+            isAnimating = false;
+            const q = questions[cur];
+            
+            document.getElementById('q-num').innerText = cur + 1;
+            document.getElementById('q-text').innerText = q.question;
+            
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            box.style.pointerEvents = 'auto'; // Re-enable clicking options
+            
+            const labels = ['A', 'B', 'C', 'D'];
+            
+            q.options.forEach((opt, idx) => {
+                const row = document.createElement('div');
+                row.className = 'option-row';
+                row.innerHTML = `<div class="label-box">${labels[idx]}</div><div class="option-text">${opt}</div>`;
+                row.onclick = () => {
+                    if (isAnimating) return; // Stop them from changing answer after clicking next
+                    selectedIdx = idx;
+                    document.querySelectorAll('.option-row').forEach(r => r.classList.remove('selected'));
+                    row.classList.add('selected');
+                };
+                box.appendChild(row);
+            });
+        }
+
+        function handleNext() {
+            if (isAnimating) return;
+            if (selectedIdx === -1) { alert("Select an option!"); return; }
+            
+            isAnimating = true;
+            document.getElementById('options-box').style.pointerEvents = 'none'; // Lock choices
+            
+            const allRows = document.querySelectorAll('.option-row');
+            const selectedRow = allRows[selectedIdx];
+            const correctIdx = questions[cur].answer;
+
+            // Check if they are correct
+            if (selectedIdx === correctIdx) {
+                score++;
+                selectedRow.classList.remove('selected');
+                selectedRow.classList.add('correct');
+            } else {
+                selectedRow.classList.remove('selected');
+                selectedRow.classList.add('wrong');
+                // Instantly reveal the correct answer in green so they learn from it!
+                allRows[correctIdx].classList.add('correct');
+            }
+
+            // Wait 1.5 seconds for the animation to play, then move to the next question
+            setTimeout(() => {
+                move();
+            }, 1500);
+        }
+
+        function handleSkip() { 
+            if (isAnimating) return;
+            move(); 
+        }
+
+        async function move() {
+            if (cur < questions.length - 1) { 
+                cur++; 
+                render(); 
+            } else { 
+                document.getElementById('q-text').innerText = "Saving your score..."; 
+                
+                try {
+                    await fetch('/save_score', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ score: score, total: questions.length })
+                    });
+                } catch (err) { console.log(err); }
+
+                document.querySelector('.main-card').innerHTML = `
+                    <h2 class="epic-title" style="margin-bottom: 10px;">🎉 All Done!</h2>
+                    <h1 style="color: #1e293b; font-size: 4rem; margin: 10px 0; text-align: center;">${score}/${questions.length}</h1>
+                    <p style="color: #64748b; font-weight: 800; text-align: center; margin-bottom: 30px;">Awesome job!</p>
+                    <button class="btn-login" onclick="window.location.href='/dashboard'">SEE LEADERBOARD 🏆</button>
+                    <button class="btn-login" style="background: #3b82f6; box-shadow: 0 6px 0 #2563eb; margin-top: 15px;" onclick="location.reload()">PLAY AGAIN 🔄</button>
+                `;
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONLION TESTS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=10">
+</head>
+<body>
+    <div class="intro-overlay" style="animation: fadeOutOverlay 0.8s forwards 1.2s;">
+        <div class="magic-orb"></div>
+        <div style="color: #ca8a04; font-weight: 900; letter-spacing: 2px; font-size: 1.2rem;">GETTING READY...</div>
+    </div>
+
+    <div class="main-card">
+        <h2 class="epic-title">📚 onlion test</h2>
+        <p style="color: #64748b; font-size: 1rem; font-weight: 800; text-align: center; margin-bottom: 25px;">Ready to test your knowledge?</p>
+        
+        <form action="/login" method="POST" class="login-form">
+            <input type="text" name="username" placeholder="Student ID (e.g., Suman)" required autocomplete="off">
+            
+            <div style="position: relative; margin: 10px 0;">
+                <input type="password" name="password" id="student-pwd" placeholder="Password" required style="margin: 0; width: 100%; padding-right: 45px;">
+                <span onclick="togglePwd('student-pwd', this)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 1.2rem; user-select: none;" title="Show Password">👁️</span>
+            </div>
+
+            <button type="submit" class="btn-login">Let's Play! 🚀</button>
+        </form>
+
+        <div style="margin-top: 25px; text-align: center;">
+            <a href="/dashboard" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem; font-weight: 800;">
+                ⚙️ Admin Area
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function togglePwd(id, el) {
+            var x = document.getElementById(id);
+            if (x.type === "password") {
+                x.type = "text";
+                el.innerText = "🙈"; // Hide icon
+            } else {
+                x.type = "password";
+                el.innerText = "👁️"; // Show icon
+            }
+        }
+    </script>
+</body>
+</html>
