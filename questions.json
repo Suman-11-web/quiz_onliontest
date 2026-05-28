@@ -1,0 +1,102 @@
+[
+    {
+        "question": "If matrix A has order 2x3 and matrix B has order 3x4, what is the order of the product matrix AB?",
+        "options": ["2x4", "3x3", "2x3", "4x2"],
+        "answer": 0
+    },
+    {
+        "question": "Which of the following is the required condition for a square matrix A to be a singular matrix?",
+        "options": ["|A| = 1", "|A| = 0", "A = A'", "A = -A'"],
+        "answer": 1
+    },
+    {
+        "question": "If A is a symmetric matrix, which of the following statements is true? (Where A' is the transpose of A)",
+        "options": ["A = -A'", "A = A'", "|A| = 0", "A^2 = I"],
+        "answer": 1
+    },
+    {
+        "question": "What is the inverse of an Identity matrix (I)?",
+        "options": ["0", "I", "-I", "Does not exist"],
+        "answer": 1
+    },
+    {
+        "question": "For any two conformable matrices A and B, the transpose of their product (AB)' is equal to:",
+        "options": ["A'B'", "B'A'", "AB", "BA"],
+        "answer": 1
+    },
+    {
+        "question": "If A is a square matrix of order 3 and determinant |A| = 4, what is the value of the determinant |2A|?",
+        "options": ["8", "16", "32", "64"],
+        "answer": 2
+    },
+    {
+        "question": "A matrix having only one row and any number of columns is formally known as a:",
+        "options": ["Column matrix", "Square matrix", "Diagonal matrix", "Row matrix"],
+        "answer": 3
+    },
+    {
+        "question": "What is the indefinite integration of e^x with respect to x? (∫ e^x dx)",
+        "options": ["e^x + C", "x * e^x + C", "e^x / x + C", "ln(x) + C"],
+        "answer": 0
+    },
+    {
+        "question": "What is the value of the integral ∫(1/x) dx?",
+        "options": ["x^2 / 2 + C", "log|x| + C", "1/x^2 + C", "-1/x^2 + C"],
+        "answer": 1
+    },
+    {
+        "question": "Evaluate the definite integral of x^2 from limits 0 to 1.",
+        "options": ["1/2", "1", "1/3", "0"],
+        "answer": 2
+    },
+    {
+        "question": "What is the integral of sin(x) dx?",
+        "options": ["cos(x) + C", "-cos(x) + C", "sin(x) + C", "-sin(x) + C"],
+        "answer": 1
+    },
+    {
+        "question": "According to the properties of definite integrals, if f(x) is an odd function, then the integral of f(x) from -a to a is:",
+        "options": ["2 * ∫f(x)dx from 0 to a", "a", "0", "1"],
+        "answer": 2
+    },
+    {
+        "question": "Evaluate the standard integral: ∫ sec^2(x) dx",
+        "options": ["tan(x) + C", "cot(x) + C", "sec(x)*tan(x) + C", "-tan(x) + C"],
+        "answer": 0
+    },
+    {
+        "question": "The mathematical process of finding the original function from its derivative is called:",
+        "options": ["Differentiation", "Integration", "Finding the Limit", "Evaluating Continuity"],
+        "answer": 1
+    },
+    {
+        "question": "If A and B are two independent events, then the probability of their intersection P(A ∩ B) is equal to:",
+        "options": ["P(A) + P(B)", "P(A) * P(B)", "P(A) / P(B)", "P(A) - P(B)"],
+        "answer": 1
+    },
+    {
+        "question": "The conditional probability of event A occurring, given that event B has already occurred, is calculated by the formula:",
+        "options": ["P(A ∩ B) / P(B)", "P(A ∪ B) / P(B)", "P(A) * P(B)", "P(A) / P(B)"],
+        "answer": 0
+    },
+    {
+        "question": "In a binomial distribution, if 'n' is the number of trials, 'p' is probability of success, and 'q' is probability of failure, the variance is given by:",
+        "options": ["np", "npq", "n/p", "pq/n"],
+        "answer": 1
+    },
+    {
+        "question": "If two events A and B are mutually exclusive, then the probability of them happening together P(A ∩ B) is:",
+        "options": ["1", "0.5", "0", "P(A) * P(B)"],
+        "answer": 2
+    },
+    {
+        "question": "A standard six-sided die is thrown once. What is the probability of rolling a prime number?",
+        "options": ["1/2", "1/3", "1/6", "2/3"],
+        "answer": 0
+    },
+    {
+        "question": "In any valid probability distribution, the sum of all individual probabilities must always be strictly equal to:",
+        "options": ["0", "0.5", "1", "100"],
+        "answer": 2
+    }
+]
