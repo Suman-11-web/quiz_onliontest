@@ -64,3 +64,10 @@ This project is successfully hosted online using modern deployment platforms for
 # Project Status
 
 Project is currently active and continuously improving with new features and UI enhancements.
+
+
+# Connect With Me
+
+Instagram: https://instagram.com/__suman._.007
+
+GitHub: https://github.com/Suman-11-web
